@@ -33,6 +33,7 @@ io.on('connection', (socket) => {
   // Handle token verification and group joining
   socket.on('teacher', async ({token , meetingId}) => {
     const url = 'https://userservice-production-dd99.up.railway.app'
+    const url2 = 'https://secondservice.onrender.com'
     const response = await axios.get(url+ '/api/v1/any', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -41,7 +42,7 @@ io.on('connection', (socket) => {
 
     const teacher = response.data;
 
-    await axios.get(url+'/api/courses/' + meetingId, {
+    await axios.get(url2+'/api/courses/' + meetingId, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -55,9 +56,10 @@ io.on('connection', (socket) => {
       socket.join(`meeting-${meetingId}`);
 
       users[socket.id] = teacher;
+      console.log(users[socket.id]);
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
-      socket.emit('tokenVerified', true);
+      socket.emit('tokenVerified', {message : true});
     })
     .catch(error => {
       // handle error
@@ -66,36 +68,44 @@ io.on('connection', (socket) => {
       socket.disconnect();
     });
   });
-  socket.on('student', async ({token , meetingId}) => {
+  socket.on('student', async ({token , meetingId} , callback) => {
     const url = 'https://userservice-production-dd99.up.railway.app'
+    const url2 = 'https://secondservice.onrender.com'
     const response = await axios.get(url+ '/api/v1/any', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
     });
 
+    console.log("done 1");
+    console.log(meetingId);
+    console.log(token);
     const student = response.data;
 
-    await axios.get(url+'/api/students/cours/' + meetingId, {
+    await axios.get(url2+'/api/students/cours/' + meetingId, {
       headers: {
         Authorization: `Bearer ${token}`
       }
     })
     .then(response => {
       // handle success
-      console.log(response.data);
+      //console.log(response.data);
       //activeMeetings[meetingId] = socket;
+      console.log("done 2");
 
       // Join the teacher to the meeting room
       socket.join(`meeting-${meetingId}`);
       users[socket.id] = student;
+      console.log(users[socket.id]);
 
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
-      socket.emit('tokenVerified', true);
+      callback({message : true});
+      socket.emit('tokenVerified', {message : true});
     })
     .catch(error => {
       // handle error
+      console.log("error 3");
       console.log(error);
       // Disconnect the socket
       socket.disconnect();
