@@ -19,7 +19,7 @@ const io = socketio(server, {
 
 const PORT = 3000;
 //const ngrokurl = " https://3f0f-41-101-206-187.ngrok-free.app";
-const url = "https://userservice-production-dd99.up.railway.app"
+const url = "https://secondservice.onrender.com"
 
 io.on('error', (error) => {
     console.error('Socket error:', error.message);
