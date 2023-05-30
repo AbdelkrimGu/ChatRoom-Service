@@ -31,7 +31,7 @@ io.on('connection', (socket) => {
   console.log(`New connection: ${socket.id}`);
 
   // Handle token verification and group joining
-  socket.on('teacher', async (token , meetingId) => {
+  socket.on('teacher', async ({token , meetingId}) => {
     const url = 'https://userservice-production-dd99.up.railway.app'
     const response = await axios.get(url+ '/api/v1/any', {
         headers: {
@@ -66,7 +66,7 @@ io.on('connection', (socket) => {
       socket.disconnect();
     });
   });
-  socket.on('student', async (token , meetingId) => {
+  socket.on('student', async ({token , meetingId}) => {
     const url = 'https://userservice-production-dd99.up.railway.app'
     const response = await axios.get(url+ '/api/v1/any', {
         headers: {
