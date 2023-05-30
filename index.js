@@ -29,9 +29,17 @@ io.on('connection', (socket) => {
   console.log(`New connection: ${socket.id}`);
 
   // Handle token verification and group joining
-  socket.on('teacher', (token , meetingId) => {
+  socket.on('teacher', async (token , meetingId) => {
+    const url = 'https://userservice-production-dd99.up.railway.app'
+    const response = await axios.get(url+ '/api/v1/any', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+    });
 
-    axios.get(url+'/api/courses/' + meetingId, {
+    const teacher = response.data;
+
+    await axios.get(url+'/api/courses/' + meetingId, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -43,6 +51,10 @@ io.on('connection', (socket) => {
 
       // Join the teacher to the meeting room
       socket.join(`meeting-${meetingId}`);
+      socket.meetingId = meetingId;
+      socket.nom = teacher.nom;
+      socket.prenom = teacher.prenom;
+      socket.imageUrl = teacher.imageUrl;
 
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
@@ -55,9 +67,17 @@ io.on('connection', (socket) => {
       socket.disconnect();
     });
   });
-  socket.on('student', (token , meetingId) => {
+  socket.on('student', async (token , meetingId) => {
+    const url = 'https://userservice-production-dd99.up.railway.app'
+    const response = await axios.get(url+ '/api/v1/any', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+    });
 
-    axios.get(url+'/api/students/cours/' + meetingId, {
+    const student = response.data;
+
+    await axios.get(url+'/api/students/cours/' + meetingId, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -69,6 +89,9 @@ io.on('connection', (socket) => {
 
       // Join the teacher to the meeting room
       socket.join(`meeting-${meetingId}`);
+      socket.meetingId = meetingId;
+      socket.nom = student.nom;
+      socket.prenom = student.prenom;
 
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
@@ -103,9 +126,9 @@ io.on('connection', (socket) => {
 
   
 
-  socket.on('message', ({ meetingId, message ,sender}) => {
+  socket.on('message', ({ meetingId, message ,nom , prenom}) => {
     console.log("here",message);
-    socket.broadcast.to(`meeting-${meetingId}`).emit('message', { socketId: socket.id, message: message ,sender: sender });
+    socket.broadcast.to(`meeting-${meetingId}`).emit('message', { socketId: socket.id, message: message ,nom : nom , prenom : prenom});
     
   });
 
