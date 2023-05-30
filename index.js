@@ -2,19 +2,17 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const axios = require('axios');
+const cors = require('cors');
 
 
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server, {
-    cors: {
-      origin: '*'
-    }
-});
+const io = socketio(server);
 
 
-
+// Enable CORS
+app.use(cors());
 
 const PORT = 3000;
 //const ngrokurl = " https://3f0f-41-101-206-187.ngrok-free.app";
