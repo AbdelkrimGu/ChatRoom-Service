@@ -14,6 +14,8 @@ const io = socketio(server, {
     }
 });
 
+users = [];
+
 
 
 
@@ -51,11 +53,8 @@ io.on('connection', (socket) => {
 
       // Join the teacher to the meeting room
       socket.join(`meeting-${meetingId}`);
-      socket.meetingId = meetingId;
-      socket.nom = teacher.nom;
-      socket.prenom = teacher.prenom;
-      socket.imageUrl = teacher.imageUrl;
 
+      users[socket.id] = teacher;
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
       socket.emit('tokenVerified', true);
@@ -89,9 +88,7 @@ io.on('connection', (socket) => {
 
       // Join the teacher to the meeting room
       socket.join(`meeting-${meetingId}`);
-      socket.meetingId = meetingId;
-      socket.nom = student.nom;
-      socket.prenom = student.prenom;
+      users[socket.id] = student;
 
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
@@ -126,9 +123,9 @@ io.on('connection', (socket) => {
 
   
 
-  socket.on('message', ({ meetingId, message ,nom , prenom , imageUrl}) => {
+  socket.on('message', ({ meetingId, message}) => {
     console.log("here",message);
-    socket.broadcast.to(`meeting-${meetingId}`).emit('message', { socketId: socket.id, message: message ,nom : nom , prenom : prenom ,imageUrl : imageUrl});
+    socket.broadcast.to(`meeting-${meetingId}`).emit('message', { socketId: socket.id, message: message ,nom : users[socket.id].nom , prenom : users[socket.id].prenom ,imageUrl : users[socket.id].imageUrl});
     
   });
 
