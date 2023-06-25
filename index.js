@@ -135,7 +135,7 @@ io.on('connection', (socket) => {
 
   socket.on('message', ({ meetingId, message}) => {
     console.log("here",message);
-    socket.broadcast.to(`meeting-${meetingId}`).emit('message', { socketId: socket.id, message: message ,nom : users[socket.id].nom , prenom : users[socket.id].prenom ,imageUrl : users[socket.id].imageUrl});
+    socket.broadcast.to(`meeting-${meetingId}`).emit('newMmessage', { socketId: socket.id, message: message ,nom : users[socket.id].nom , prenom : users[socket.id].prenom ,imageUrl : users[socket.id].imageUrl});
     
   });
 
