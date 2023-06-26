@@ -62,6 +62,7 @@ io.on('connection', (socket) => {
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
       socket.emit('tokenVerified', {message : true});
+      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id, message: message ,nom : users[socket.id].nom , prenom : users[socket.id].prenom ,imageUrl : users[socket.id].imageUrl});
     })
     .catch(error => {
       // handle error
@@ -106,6 +107,7 @@ io.on('connection', (socket) => {
       //activeMeetings[meetingId].sockets.push(socket);
       callback({message : true});
       socket.emit('tokenVerified', {message : true});
+      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id, message: message ,nom : users[socket.id].nom , prenom : users[socket.id].prenom ,imageUrl : users[socket.id].imageUrl});
     })
     .catch(error => {
       // handle error
