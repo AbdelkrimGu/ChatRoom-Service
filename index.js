@@ -62,7 +62,17 @@ io.on('connection', (socket) => {
       // Add the teacher's socket to the list of sockets for the meeting
       //activeMeetings[meetingId].sockets.push(socket);
       socket.emit('tokenVerified', {message : true});
-      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id ,nom : users[socket.id].nom , prenom : users[socket.id].prenom ,imageUrl : users[socket.id].imageUrl});
+      // Retrieve the list of sockets in the meeting room
+      const socketsInRoom = io.sockets.adapter.rooms.get(`meeting-${meetingId}`);
+
+      // Iterate through the socket IDs and fetch user information
+      const userList = [];
+      for (const socketId of socketsInRoom) {
+        const user = users[socketId];
+        // Assuming 'users' is an object mapping socket IDs to user objects
+        userList.push(user);
+      }
+      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id ,users : userList});
     })
     .catch(error => {
       // handle error
@@ -107,7 +117,18 @@ io.on('connection', (socket) => {
       //activeMeetings[meetingId].sockets.push(socket);
       callback({message : true});
       socket.emit('tokenVerified', {message : true});
-      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id ,nom : users[socket.id].nom , prenom : users[socket.id].prenom ,imageUrl : users[socket.id].imageUrl});
+      
+      // Retrieve the list of sockets in the meeting room
+      const socketsInRoom = io.sockets.adapter.rooms.get(`meeting-${meetingId}`);
+
+      // Iterate through the socket IDs and fetch user information
+      const userList = [];
+      for (const socketId of socketsInRoom) {
+        const user = users[socketId];
+        // Assuming 'users' is an object mapping socket IDs to user objects
+        userList.push(user);
+      }
+      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id ,users : userList});
     })
     .catch(error => {
       // handle error
