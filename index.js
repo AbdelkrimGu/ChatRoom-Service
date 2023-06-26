@@ -72,7 +72,8 @@ io.on('connection', (socket) => {
         // Assuming 'users' is an object mapping socket IDs to user objects
         userList.push(user);
       }
-      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id ,users : userList});
+      // Emit the "user" event to all sockets in the meeting room
+      io.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id, users: userList });
     })
     .catch(error => {
       // handle error
@@ -128,7 +129,8 @@ io.on('connection', (socket) => {
         // Assuming 'users' is an object mapping socket IDs to user objects
         userList.push(user);
       }
-      socket.broadcast.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id ,users : userList});
+      // Emit the "user" event to all sockets in the meeting room
+      io.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id, users: userList });
     })
     .catch(error => {
       // handle error
@@ -173,7 +175,7 @@ io.on('connection', (socket) => {
 
     // If the socket was not part of a meeting, do nothing
     if (!meetingId) return;
-    
+
     delete users[socket.id];
 
     socket.broadcast.to(`meeting-${meetingId}`).emit('userDisconnected', { socketId: socket.id, meetingId });
