@@ -32,6 +32,8 @@ io.on('connection', (socket) => {
 
   // Handle token verification and group joining
   socket.on('teacher', async ({token , meetingId}) => {
+    console.log(token);
+    console.log(meetingId);
     const url = 'https://userservice-production-dd99.up.railway.app'
     const url2 = 'https://secondservice.onrender.com'
     const response = await axios.get(url+ '/api/v1/any', {
@@ -69,6 +71,8 @@ io.on('connection', (socket) => {
     });
   });
   socket.on('student', async ({token , meetingId} , callback) => {
+    console.log(token);
+    console.log(meetingId);
     const url = 'https://userservice-production-dd99.up.railway.app'
     const url2 = 'https://secondservice.onrender.com'
     const response = await axios.get(url+ '/api/v1/any', {
