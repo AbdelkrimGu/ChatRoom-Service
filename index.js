@@ -173,6 +173,8 @@ io.on('connection', (socket) => {
 
     // If the socket was not part of a meeting, do nothing
     if (!meetingId) return;
+    
+    delete users[socket.id];
 
     socket.broadcast.to(`meeting-${meetingId}`).emit('userDisconnected', { socketId: socket.id, meetingId });
     console.log(`Socket ${socket.id} left meeting ${meetingId}`);
