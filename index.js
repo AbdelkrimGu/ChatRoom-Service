@@ -43,6 +43,7 @@ io.on('connection', (socket) => {
     });
 
     const teacher = response.data;
+    socket.meetingId = meetingId;
 
     await axios.get(url2+'/api/courses/' + meetingId, {
       headers: {
@@ -97,6 +98,7 @@ io.on('connection', (socket) => {
     console.log(meetingId);
     console.log(token);
     const student = response.data;
+    socket.meetingId = meetingId;
 
     await axios.get(url2+'/api/students/cours/' + meetingId, {
       headers: {
