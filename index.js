@@ -177,10 +177,22 @@ io.on('connection', (socket) => {
     if (!meetingId) return;
 
     delete users[socket.id];
-
-    socket.broadcast.to(`meeting-${meetingId}`).emit('userDisconnected', { socketId: socket.id, meetingId });
-    console.log(`Socket ${socket.id} left meeting ${meetingId}`);
     socket.leave(`meeting-${meetingId}`);
+
+    const socketsInRoom = io.sockets.adapter.rooms.get(`meeting-${meetingId}`);
+
+    // Iterate through the socket IDs and fetch user information
+    const userList = [];
+    for (const socketId of socketsInRoom) {
+      const user = users[socketId];
+      // Assuming 'users' is an object mapping socket IDs to user objects
+      userList.push(user);
+    }
+    // Emit the "user" event to all sockets in the meeting room
+    io.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id, users: userList });
+
+    //socket.broadcast.to(`meeting-${meetingId}`).emit('userDisconnected', { socketId: socket.id, meetingId });
+    console.log(`Socket ${socket.id} left meeting ${meetingId}`);
     
 
   });
