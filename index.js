@@ -183,12 +183,16 @@ io.on('connection', (socket) => {
 
     const socketsInRoom = io.sockets.adapter.rooms.get(`meeting-${meetingId}`);
 
+
+
     // Iterate through the socket IDs and fetch user information
     const userList = [];
-    for (const socketId of socketsInRoom) {
-      const user = users[socketId];
-      // Assuming 'users' is an object mapping socket IDs to user objects
-      userList.push(user);
+    if (socketsInRoom) {
+      for (const socketId of socketsInRoom) {
+        const user = users[socketId];
+        // Assuming 'users' is an object mapping socket IDs to user objects
+        userList.push(user);
+      }
     }
     // Emit the "user" event to all sockets in the meeting room
     io.to(`meeting-${meetingId}`).emit('user', { socketId: socket.id, users: userList });
